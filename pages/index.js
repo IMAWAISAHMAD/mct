@@ -1,34 +1,9 @@
 import React,{useState} from 'react'
+import fetch from 'isomorphic-unfetch'
 import Head from 'next/head'
 import Result from '../components/Result'
 import MCTForm from '../components/MCTForm'
-const Home = () => {
-  let data = {
-    calories: {
-      label: "Calories",
-      total: 1840,
-      target: 1850,
-      variant: 150
-    },
-    carbs: {
-      label: "Carbs",
-      total: 190,
-      target: 160,
-      variant: 15
-    },
-    fat: {
-      label: "Fat",
-      total: 55,
-      target: 60,
-      variant: 10
-    },
-    protein: {
-      label: "Protein",
-      total: 120,
-      target: 165,
-      variant: 10
-    }
-  }
+const Home = ({data}) => {
   const [results, setResults] = useState(data);
   const onChange = (e) => {
     const data = { ...results };
@@ -83,4 +58,17 @@ const Home = () => {
     </div>
   </div>
 )}
+
+export async function getStaticProps(context) {
+  const res = await fetch("http://localhost:3000/api/daily");
+  const json = await res.json();
+  return {
+    props: {
+      data: json,
+    },
+  };
+}
+
+
+
 export default Home
