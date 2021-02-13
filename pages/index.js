@@ -60,7 +60,7 @@ const Home = ({data}) => {
 )}
 
 export async function getStaticProps(context) {
-  const res = await fetch("https://mct-mauve.vercel.app/api/daily");
+  const res = await fetch("http://localhost:3000/");
   const json = await res.json();
   return {
     props: {
