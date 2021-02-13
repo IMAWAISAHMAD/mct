@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import Head from 'next/head'
-import Result from './components/Result'
-import MCTForm from './components/MCTForm'
+import Result from '../components/Result'
+import MCTForm from '../components/MCTForm'
 const Home = () => {
   let data = {
     calories: {
