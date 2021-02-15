@@ -7,7 +7,7 @@ import MCTForm from '../components/MCTForm'
 import {server} from '../config/index'
 
 const Home = ({data}) => {
-  
+  console.log(server);
   const [results, setResults] = useState(data);
   
   const onChange = (e) => {
