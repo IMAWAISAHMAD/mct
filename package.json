@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "dayjs": "^1.10.4",
     "isomorphic-unfetch": "^3.1.0",
     "mongodb": "^3.6.4",
     "next": "10.0.6",

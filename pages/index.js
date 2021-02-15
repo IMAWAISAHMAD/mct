@@ -1,10 +1,15 @@
 import React,{useState} from 'react'
 import fetch from 'isomorphic-unfetch'
+import dayjs from 'dayjs'
 import Head from 'next/head'
 import Result from '../components/Result'
 import MCTForm from '../components/MCTForm'
+
+
 const Home = ({data}) => {
+
   const [results, setResults] = useState(data);
+  
   const onChange = (e) => {
     const data = { ...results };
     let name = e.target.name;
@@ -12,6 +17,28 @@ const Home = ({data}) => {
     let resultMacro = name.split(" ")[1].toLowerCase();
     data[resultMacro][resultType] = e.target.value;
     setResults(data);
+  }
+
+  const getDataForPreviousDay = async () => {
+    let currentDate = dayjs(results.date);
+    let newDate = currentDate.subtract(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
+    const res = await fetch('http://localhost:3000/api/daily?date=' + newDate)
+    const json = await res.json()
+    setResults(json);
+  }
+
+  const getDataForNextDay = async () => {
+    let currentDate = dayjs(results.date);
+    let newDate = currentDate.add(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
+    const res = await fetch('http://localhost:3000/api/daily?date=' + newDate)
+    const json = await res.json()
+    setResults(json);
+  }
+  const updateMacros = async () => {
+    const res = await fetch('http://localhost:3000/api/daily', {
+      method: 'post',
+      body: JSON.stringify(results)
+    })
   }
   return (
   <div>
@@ -28,11 +55,11 @@ const Home = ({data}) => {
           <h1 className="text-4xl">Macro Compliance Tracker</h1>
         </div>
       </div>
-
+      
       <div className="flex text-center">
-        <div className="w-1/3 bg-gray-200 p-4">Previous Day</div>
-        <div className="w-1/3 p-4">1/23/2020</div>
-        <div className="w-1/3 bg-gray-200 p-4">Next Day</div>
+        <div className="w-1/3 bg-gray-200 p-4"><button onClick={getDataForPreviousDay}>Previous Day</button></div>
+        <div className="w-1/3 p-4">{dayjs(results.date).format('MM/DD/YYYY')}</div>
+        <div className="w-1/3 bg-gray-200 p-4"><button onClick={getDataForNextDay}>Next Day</button></div>
       </div>
 
       <div className="flex mb-4 text-center">
@@ -50,7 +77,7 @@ const Home = ({data}) => {
 
       <div className="flex text-center">
         <div className="w-full m-4">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={updateMacros}>
               Save
           </button>
         </div>
@@ -59,16 +86,12 @@ const Home = ({data}) => {
   </div>
 )}
 
-export async function getStaticProps(context) {
-  const res = await fetch("http://localhost:3000/");
-  const json = await res.json();
-  return {
-    props: {
-      data: json,
-    },
-  };
-}
 
+Home.getInitialProps = async () => {
+  const res = await fetch('http://localhost:3000/api/daily')
+  const json = await res.json()
+  return { data: json }
+}
 
 
 export default Home
